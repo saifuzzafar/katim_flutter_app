@@ -58,7 +58,7 @@ void main() {
         ],
         child: Builder(
           builder: (_) => MaterialApp(
-            home: const EventListView(),
+            home: const EventListMobileView(),
             navigatorObservers: [mockObserver],
           ),
         ),

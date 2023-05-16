@@ -70,7 +70,11 @@ class EventListWebView extends StatelessWidget {
           Container(
               color: AppConstants.searchBarColor,
               child: MaterialButton(
-                onPressed: () {},
+                onPressed: () {
+                  eventDataProvider.textController.clear();
+                  eventDataProvider.pageNumberForApi = 1;
+                  eventDataProvider.getEventList(onComplete: (val) {});
+                },
                 child: const Text(
                   "Cancel",
                   style: TextStyle(color: Colors.white, fontSize: 18),

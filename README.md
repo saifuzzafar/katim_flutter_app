@@ -34,3 +34,9 @@ Dependency Injection - Provider
 Network - Dio
 Database - Hive
 State managment - Provider
+
+## Screenshots
+![Screenshot of MacOS](assets/screenshots/macOS.png)
+![Screenshot of Flutter Web](assets/screenshots/web_flutter.png)
+![Screenshot of iOS](assets/screenshots/mobile_ios.png)
+![Screenshot of Android](assets/screenshots/mobile_android.png)

@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:katim_app/domain/entities/event_list_response.dart';
 import 'package:katim_app/domain/usecases/check_if_favourite_usecase.dart';
 import 'package:katim_app/domain/usecases/get_events_usecase.dart';
@@ -44,16 +45,17 @@ class EventListDataProvider with ChangeNotifier {
         }
       }
       loading = false;
+
       onComplete(true);
       notifyListeners();
     } catch (e) {
       print('Exceptions for the api ${e.toString()}');
       onComplete(false);
-      // Fluttertoast.showToast(
-      //   msg: "Something went wrong with app",
-      //   toastLength: Toast.LENGTH_SHORT,
-      //   timeInSecForIosWeb: 1,
-      // );
+      Fluttertoast.showToast(
+        msg: "Something went wrong with app",
+        toastLength: Toast.LENGTH_SHORT,
+        timeInSecForIosWeb: 1,
+      );
       throw Exception(e);
     }
   }

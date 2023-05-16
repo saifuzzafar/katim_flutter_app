@@ -1,4 +1,5 @@
 import 'dart:core';
+import 'dart:io';
 
 import 'package:easy_debounce/easy_debounce.dart';
 import 'package:flutter/material.dart';
@@ -11,30 +12,17 @@ import 'package:katim_app/presentation/molecules/custom_divider.dart';
 import 'package:katim_app/presentation/molecules/list_shim.dart';
 import 'package:katim_app/presentation/molecules/smart_bottom_refresher.dart';
 import 'package:katim_app/utils/app_constants.dart';
+import 'package:katim_app/utils/ui_utils.dart';
 import 'package:provider/provider.dart';
 
-class EventListView extends StatefulWidget {
-  const EventListView({Key? key}) : super(key: key);
-
-  @override
-  State<EventListView> createState() => _EventListViewState();
-}
-
-class _EventListViewState extends State<EventListView> {
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-
-    final event = Provider.of<EventListDataProvider>(context, listen: false);
-    event.getEventList(onComplete: (val) {});
-  }
+class EventListMobileView extends StatelessWidget {
+  const EventListMobileView({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      key: Key('event_list_view'),
-      appBar: const EmptyAppBar(),
+      key: const Key('event_list_view'),
+      appBar: const AppBar(),
       body: SafeArea(
         child: Column(
           children: [_buildSearchBar(context), _buildBody()],
@@ -62,6 +50,12 @@ class _EventListViewState extends State<EventListView> {
                   // Handle the text field value change here
                   EasyDebounce.debounce(
                       'my-debouncer', const Duration(milliseconds: 400), () {
+                    if (Platform.isAndroid || Platform.isIOS) {
+                      Future.delayed(const Duration(seconds: 500), () {
+                        UIUtils.hideKeyboard();
+                      });
+                    }
+
                     eventDataProvider.pageNumberForApi = 1;
                     eventDataProvider.getEventList(onComplete: (val) {});
                   });
@@ -91,8 +85,6 @@ class _EventListViewState extends State<EventListView> {
     return Expanded(
       child: Consumer<EventListDataProvider>(
         builder: (context, value, child) {
-          print('inside the consumer');
-          print('${value.eventList.isEmpty}: value');
           final eventList = value.eventList;
           return value.loading
               ? const ListShim(
@@ -106,7 +98,7 @@ class _EventListViewState extends State<EventListView> {
                         style: TextStyle(fontSize: 18),
                       ))
                   : Padding(
-                      padding: const EdgeInsets.only(top: 15),
+                      padding: const EdgeInsets.only(top: 15, right: 15),
                       child: SmartBottomRefresher().buildLoader(
                         context: context,
                         refreshController: value.mobileRefreshController,
@@ -157,8 +149,8 @@ class _EventListViewState extends State<EventListView> {
   }
 }
 
-class EmptyAppBar extends StatelessWidget implements PreferredSizeWidget {
-  const EmptyAppBar({super.key});
+class AppBar extends StatelessWidget implements PreferredSizeWidget {
+  const AppBar({super.key});
 
   @override
   Widget build(BuildContext context) {

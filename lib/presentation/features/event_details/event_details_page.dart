@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:katim_app/presentation/features/event_details/event_details_view.dart';
 import 'package:katim_app/presentation/features/event_details/event_details_web_view.dart';
 import 'package:katim_app/presentation/molecules/device_detector_widget.dart';
+import 'package:katim_app/utils/ui_utils.dart';
 
 class EventDetailsPage extends StatelessWidget {
   EventDetailsArguments arguments;
@@ -20,6 +21,13 @@ class EventDetailsPage extends StatelessWidget {
                 arguments: arguments,
               ));
     } else if (defaultTargetPlatform == TargetPlatform.macOS) {
+      if (UIUtils.isWeb(context)) {
+        return EventDetailsWebView(arguments: arguments);
+      } else {
+        return EventDetailsView(
+          arguments: arguments,
+        );
+      }
       return EventDetailsWebView(arguments: arguments);
     } else {
       return EventDetailsView(

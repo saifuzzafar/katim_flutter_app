@@ -59,21 +59,27 @@ class EventGridItem extends StatelessWidget {
             ),
             location == null
                 ? const SizedBox.shrink()
-                : Text(location!,
-                    style: TextStyle(
-                        color: Colors.grey[700],
-                        fontSize: 16,
-                        fontWeight: FontWeight.w400)),
+                : FittedBox(
+                    fit: BoxFit.fitWidth,
+                    child: Text(location!,
+                        style: TextStyle(
+                            color: Colors.grey[700],
+                            fontSize: 15,
+                            fontWeight: FontWeight.w400)),
+                  ),
             const SizedBox(
               height: 5,
             ),
             dateTime == null
                 ? const SizedBox.shrink()
-                : Text(AppUtils.getFormattedDataAndTime(dateTime!),
-                    style: TextStyle(
-                        color: Colors.grey[700],
-                        fontSize: 16,
-                        fontWeight: FontWeight.w400))
+                : FittedBox(
+                    fit: BoxFit.fitWidth,
+                    child: Text(AppUtils.getFormattedDataAndTime(dateTime!),
+                        style: TextStyle(
+                            color: Colors.grey[700],
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400)),
+                  )
           ],
         ),
         isFavorite != null && isFavorite == true

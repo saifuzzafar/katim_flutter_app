@@ -15,7 +15,7 @@ class AppRouter {
 
       default:
         return CupertinoPageRoute(
-          builder: (context) => const EventListView(),
+          builder: (context) => const EventListMobileView(),
         );
     }
   }

@@ -4,6 +4,7 @@ import 'package:katim_app/presentation/features/event_list/event_list_data_provi
 import 'package:katim_app/presentation/features/event_list/event_list_mobile_view.dart';
 import 'package:katim_app/presentation/features/event_list/event_list_web_view.dart';
 import 'package:katim_app/presentation/molecules/device_detector_widget.dart';
+import 'package:katim_app/utils/ui_utils.dart';
 import 'package:provider/provider.dart';
 
 class EventListingPage extends StatefulWidget {
@@ -28,14 +29,18 @@ class _EventListingPageState extends State<EventListingPage> {
           webSiteView: () => const EventListWebView(
                 title: "Flutter Web",
               ),
-          tabletView: () => const EventListView(),
-          phoneView: () => const EventListView());
+          tabletView: () => const EventListMobileView(),
+          phoneView: () => const EventListMobileView());
     } else if (defaultTargetPlatform == TargetPlatform.macOS) {
-      return const EventListWebView(
-        title: "MacOS",
-      );
+      if (UIUtils.isWeb(context)) {
+        return const EventListWebView(
+          title: "MacOS",
+        );
+      } else {
+        return const EventListMobileView();
+      }
     } else {
-      return const EventListView();
+      return const EventListMobileView();
     }
   }
 }
