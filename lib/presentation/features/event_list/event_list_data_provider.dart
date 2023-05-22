@@ -11,7 +11,14 @@ class EventListDataProvider with ChangeNotifier {
   EventListDataProvider(this.getEventsUseCase, this.checkIfFavouriteUseCase);
 
   List<EventsResponse> eventList = [];
-  bool loading = false;
+  bool _loading = false;
+
+  bool get loading => _loading;
+
+  set loading(bool value) {
+    _loading = value;
+    notifyListeners();
+  }
 
   RefreshController mobileRefreshController =
       RefreshController(initialRefresh: false);
@@ -44,10 +51,9 @@ class EventListDataProvider with ChangeNotifier {
           eventList = response.events ?? [];
         }
       }
-      loading = false;
 
       onComplete(true);
-      notifyListeners();
+      loading = false;
     } catch (e) {
       print('Exceptions for the api ${e.toString()}');
       onComplete(false);

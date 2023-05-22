@@ -6,11 +6,10 @@ class EventListResponse extends Equatable {
   EventListResponse({this.events, this.meta});
 
   @override
-  // TODO: implement props
-  List<Object?> get props => throw UnimplementedError();
+  List<Object?> get props => [events];
 }
 
-class EventsResponse {
+class EventsResponse extends Equatable {
   String? type;
   int? id;
   String? datetimeUtc;
@@ -29,6 +28,9 @@ class EventsResponse {
       this.shortTitle,
       this.performerResponse,
       this.venueResponse});
+
+  @override
+  List<Object?> get props => [id, title];
 }
 
 class MetaResponse {

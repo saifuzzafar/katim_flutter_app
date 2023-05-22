@@ -14,7 +14,7 @@ layers
 
 2. domain: Use cases for individual pieces of work.
 
-3. infrastructure: Services provide access to external elements such as databases, apis, etc.
+3. data: Services provide access to external elements such as databases, apis, etc.
 database-floor: Floor as the Database provider
 network-retrofit: Retrofit as the Database provider
 
