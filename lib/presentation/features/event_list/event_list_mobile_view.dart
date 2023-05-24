@@ -86,63 +86,69 @@ class EventListMobileView extends StatelessWidget {
       child: Consumer<EventListDataProvider>(
         builder: (context, value, child) {
           final eventList = value.eventList;
-          return value.loading
-              ? const ListShim(
-                  key: Key('load_shimmer'),
-                )
-              : eventList.isEmpty
-                  ? const Center(
-                      key: Key('no_data'),
-                      child: Text(
-                        "No data found",
-                        style: TextStyle(fontSize: 18),
-                      ))
-                  : Padding(
-                      padding: const EdgeInsets.only(top: 15, right: 15),
-                      child: SmartBottomRefresher().buildLoader(
-                        context: context,
-                        refreshController: value.mobileRefreshController,
-                        onLoading: () {
-                          value.pageNumberForApi += 1;
-                          value.getEventList(
-                              isPagination: true,
-                              onComplete: (val) {
-                                value.mobileRefreshController.loadComplete();
-                              });
-                        },
-                        child: ListView.builder(
-                          key: const Key('ListViewKey'),
-                          itemCount: eventList.length,
-                          itemBuilder: (context, index) {
-                            final event = eventList[index];
-                            final favStatus =
-                                value.checkFavorite(eventList[index].id);
-                            return Column(
-                              children: [
-                                InkWell(
-                                  onTap: () {
-                                    Navigator.pushNamed(
-                                        context, RoutePaths.eventDetails,
-                                        arguments:
-                                            EventDetailsArguments(index));
-                                  },
-                                  child: EventListItem(
-                                    key: Key("item_$index"),
-                                    title: event.title,
-                                    imageUrl: event.performerResponse?.imageUrl,
-                                    dateTime: event.datetimeUtc,
-                                    location:
-                                        event.venueResponse?.displayLocation,
-                                    isFavorite: favStatus,
-                                  ),
-                                ),
-                                const CustomDivider(),
-                              ],
-                            );
+          if (value.eventState == AppState.loading ||
+              value.eventState == AppState.init) {
+            return const ListShim(
+              key: Key('load_shimmer'),
+            );
+          } else if (value.eventState == AppState.empty) {
+            return const Center(
+                key: Key('no_data'),
+                child: Text(
+                  "No data found",
+                  style: TextStyle(fontSize: 18),
+                ));
+          } else if (value.eventState == AppState.success) {
+            return Padding(
+              padding: const EdgeInsets.only(top: 15, right: 15),
+              child: SmartBottomRefresher().buildLoader(
+                context: context,
+                refreshController: value.mobileRefreshController,
+                onLoading: () {
+                  value.pageNumberForApi += 1;
+                  value.getEventList(
+                      isPagination: true,
+                      onComplete: (val) {
+                        value.mobileRefreshController.loadComplete();
+                      });
+                },
+                child: ListView.builder(
+                  key: const Key('ListViewKey'),
+                  itemCount: eventList.length,
+                  itemBuilder: (context, index) {
+                    final event = eventList[index];
+                    final favStatus = value.checkFavorite(eventList[index].id);
+                    return Column(
+                      children: [
+                        InkWell(
+                          onTap: () {
+                            Navigator.pushNamed(
+                                context, RoutePaths.eventDetails,
+                                arguments: EventDetailsArguments(index));
                           },
+                          child: EventListItem(
+                            key: Key("item_$index"),
+                            title: event.title,
+                            imageUrl: event.performerResponse?.imageUrl,
+                            dateTime: event.datetimeUtc,
+                            location: event.venueResponse?.displayLocation,
+                            isFavorite: favStatus,
+                          ),
                         ),
-                      ),
+                        const CustomDivider(),
+                      ],
                     );
+                  },
+                ),
+              ),
+            );
+          } else {
+            return const Center(
+                child: Text(
+              "Something went wrong",
+              style: TextStyle(fontSize: 18),
+            ));
+          }
         },
       ),
     );

@@ -49,7 +49,7 @@ void main() {
   testWidgets("Tap on item and navigate to next screen",
       (WidgetTester tester) async {
     when(eventListDataProvider.getEventList(onComplete: (data) => true))
-        .thenAnswer((realInvocation) => eventsResponseMock);
+        .thenAnswer((realInvocation) => Future.value(eventsResponseMock));
     final mockObserver = MockNavigatorObserver();
     await tester.pumpWidget(
       MultiProvider(

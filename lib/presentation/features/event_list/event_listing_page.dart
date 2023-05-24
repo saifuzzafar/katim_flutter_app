@@ -18,8 +18,15 @@ class _EventListingPageState extends State<EventListingPage> {
   @override
   void initState() {
     super.initState();
-    final event = Provider.of<EventListDataProvider>(context, listen: false);
-    event.getEventList(onComplete: (val) {});
+    setUp();
+  }
+
+  setUp() async {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<EventListDataProvider>(context, listen: false).getEventList(
+        onComplete: (status) {},
+      );
+    });
   }
 
   @override

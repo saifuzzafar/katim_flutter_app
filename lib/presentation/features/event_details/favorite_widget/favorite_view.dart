@@ -16,14 +16,11 @@ class _FavoriteViewState extends State<FavoriteView> {
   @override
   void initState() {
     super.initState();
-    final favProvider =
-        Provider.of<FavoriteDataProvider>(context, listen: false);
-    Future.delayed(
-      const Duration(milliseconds: 100),
-      () {
-        favProvider.checkIfFavorite(widget.id);
-      },
-    );
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<FavoriteDataProvider>(context, listen: false)
+          .checkIfFavorite(widget.id);
+    });
   }
 
   @override

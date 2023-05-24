@@ -90,59 +90,65 @@ class EventListWebView extends StatelessWidget {
       child: Consumer<EventListDataProvider>(
         builder: (context, value, child) {
           final eventList = value.eventList;
-          return value.loading
-              ? const ListShim()
-              : eventList.isEmpty
-                  ? const Center(
-                      child: Text(
-                      "No data found",
-                      style: TextStyle(fontSize: 18),
-                    ))
-                  : Padding(
-                      padding:
-                          const EdgeInsets.only(top: 15, left: 30, right: 30),
-                      child: SmartBottomRefresher().buildLoader(
-                        context: context,
-                        refreshController: value.webRefreshController,
-                        onLoading: () {
-                          value.pageNumberForApi += 1;
-                          value.getEventList(
-                              isPagination: true,
-                              onComplete: (val) {
-                                value.webRefreshController.loadComplete();
-                              });
-                        },
-                        child: GridView.builder(
-                          itemCount:
-                              eventList.length, //added one for add banner
-                          gridDelegate:
-                              const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 4,
-                            crossAxisSpacing: 40.0,
-                            mainAxisSpacing: 50.0,
-                          ),
-                          itemBuilder: (context, index) {
-                            final event = eventList[index];
-                            final favStatus =
-                                value.checkFavorite(eventList[index].id);
-                            return InkWell(
-                              onTap: () {
-                                Navigator.pushNamed(
-                                    context, RoutePaths.eventDetails,
-                                    arguments: EventDetailsArguments(index));
-                              },
-                              child: EventGridItem(
-                                title: event.title,
-                                imageUrl: event.performerResponse?.imageUrl,
-                                dateTime: event.datetimeUtc,
-                                location: event.venueResponse?.displayLocation,
-                                isFavorite: favStatus,
-                              ),
-                            );
-                          },
-                        ),
+
+          if (value.eventState == AppState.loading ||
+              value.eventState == AppState.init) {
+            return const ListShim();
+          } else if (value.eventState == AppState.empty) {
+            return const Center(
+                key: Key('no_data'),
+                child: Text(
+                  "No data found",
+                  style: TextStyle(fontSize: 18),
+                ));
+          } else if (value.eventState == AppState.success) {
+            return Padding(
+              padding: const EdgeInsets.only(top: 15, left: 30, right: 30),
+              child: SmartBottomRefresher().buildLoader(
+                context: context,
+                refreshController: value.webRefreshController,
+                onLoading: () {
+                  value.pageNumberForApi += 1;
+                  value.getEventList(
+                      isPagination: true,
+                      onComplete: (val) {
+                        value.webRefreshController.loadComplete();
+                      });
+                },
+                child: GridView.builder(
+                  itemCount: eventList.length, //added one for add banner
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 4,
+                    crossAxisSpacing: 40.0,
+                    mainAxisSpacing: 50.0,
+                  ),
+                  itemBuilder: (context, index) {
+                    final event = eventList[index];
+                    final favStatus = value.checkFavorite(eventList[index].id);
+                    return InkWell(
+                      onTap: () {
+                        Navigator.pushNamed(context, RoutePaths.eventDetails,
+                            arguments: EventDetailsArguments(index));
+                      },
+                      child: EventGridItem(
+                        title: event.title,
+                        imageUrl: event.performerResponse?.imageUrl,
+                        dateTime: event.datetimeUtc,
+                        location: event.venueResponse?.displayLocation,
+                        isFavorite: favStatus,
                       ),
                     );
+                  },
+                ),
+              ),
+            );
+          } else {
+            return const Center(
+                child: Text(
+              "Something went wrong",
+              style: TextStyle(fontSize: 18),
+            ));
+          }
         },
       ),
     );

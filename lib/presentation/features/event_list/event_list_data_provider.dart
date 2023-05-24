@@ -3,6 +3,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:katim_app/domain/entities/event_list_response.dart';
 import 'package:katim_app/domain/usecases/check_if_favourite_usecase.dart';
 import 'package:katim_app/domain/usecases/get_events_usecase.dart';
+import 'package:katim_app/utils/app_constants.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class EventListDataProvider with ChangeNotifier {
@@ -11,12 +12,12 @@ class EventListDataProvider with ChangeNotifier {
   EventListDataProvider(this.getEventsUseCase, this.checkIfFavouriteUseCase);
 
   List<EventsResponse> eventList = [];
-  bool _loading = false;
+  AppState _eventState = AppState.init;
 
-  bool get loading => _loading;
+  AppState get eventState => _eventState;
 
-  set loading(bool value) {
-    _loading = value;
+  set eventState(AppState value) {
+    _eventState = value;
     notifyListeners();
   }
 
@@ -33,12 +34,15 @@ class EventListDataProvider with ChangeNotifier {
 
   int pageNumberForApi = 1;
 
-  getEventList(
+  Future<void> getEventList(
       {int? pageNumber,
       bool isPagination = false,
       required Function(bool status) onComplete}) async {
-    loading = true;
+    if (!isPagination) {
+      eventState = AppState.loading;
+    }
     String queryForApi = textController.text;
+
     try {
       final EventListResponse response = await getEventsUseCase.execute(
           EventListParams(query: queryForApi, pageNumber: pageNumberForApi));
@@ -47,14 +51,24 @@ class EventListDataProvider with ChangeNotifier {
           response.events!.isNotEmpty
               ? eventList.addAll(response.events!)
               : eventList = response.events!;
+
+          eventState = AppState.success;
         } else {
-          eventList = response.events ?? [];
+          if (response.events!.isNotEmpty) {
+            eventList = response.events!;
+            eventState = AppState.success;
+          } else {
+            eventList = [];
+            eventState = AppState.empty;
+          }
         }
+      } else {
+        eventState = AppState.fail;
       }
 
       onComplete(true);
-      loading = false;
     } catch (e) {
+      eventState = AppState.fail;
       print('Exceptions for the api ${e.toString()}');
       onComplete(false);
       Fluttertoast.showToast(
